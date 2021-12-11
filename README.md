@@ -1,2 +1,3 @@
 # online_pygame
- online game with python socket
+Online game with python socket <br />
+2 main libraries: socket and pygame <br />
