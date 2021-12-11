@@ -31,6 +31,8 @@ def threaded_client(conn):
 
         except:
             break
+    print("Lost connection")
+    conn.close()
 
 # main server infinite loop
 while True:
