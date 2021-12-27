@@ -1,6 +1,8 @@
+import pickle
 import socket
-from _thread import *
 import sys
+from _thread import *
+from player import Player
 
 # create server socket
 server_ip = sys.argv[1]
@@ -13,38 +15,30 @@ s.bind((server_ip, server_port))
 print("Server started! Waiting for connection...")
 s.listen(2)
 
-# read a string (position) and return int_tupple
-def read_pos(string):
-    string = string.split(',')
-    return int(string[0]), int(string[1])
-
-def make_pos(tup):
-    return str(tup[0]) + "," + str(tup[1])
-
-# starting positions for players
-pos =  [(0,0), (100,100)]
+# store Player objects
+players = [Player(0,0,50,50,(255,0,0)), Player(100,100,50,50,(0,0,255))]
 
 def threaded_client(conn, player):
-    conn.send(str.encode(make_pos(pos[player])))
+    conn.send(pickle.dumps(players[player]))
     reply = ""
     while True:
         try:
             packet = conn.recv(2048)
-            data = read_pos(packet.decode())
-            pos[player] = data
+            data = pickle.loads(packet)
+            players[player] = data
 
             if not data:
                 print("Disconneted")
                 break
             else:
                 if player == 1: # if p2 -> send p1 position
-                    reply = pos[0]
+                    reply = players[0]
                 else: # if p1 -> send p2 position
-                    reply = pos[1]
+                    reply = players[1]
                 print("Recieved: ", data)
                 print("Sending: ", reply)
 
-            rep_packet = str.encode(make_pos(reply))
+            rep_packet = pickle.dumps(reply)
             conn.sendall(rep_packet)
 
         except:
