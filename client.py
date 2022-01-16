@@ -1,3 +1,4 @@
+from cgitb import text
 import pygame
 import sys
 from pygame.key import start_text_input
@@ -12,7 +13,7 @@ server_ip = sys.argv[1]
 server_port = int(sys.argv[2])
 
 # create window frame
-width = 700
+width = 900
 height = 700
 window = pygame.display.set_mode((width, height))
 pygame.display.set_caption("Client")
@@ -46,16 +47,16 @@ def redraw_Window(win, game, player):
     win.fill((128,128,128))
     
     if not game.connected():
-        font = pygame.font.SysFont("comicsans", 80)
+        font = pygame.font.SysFont("comicsans", 60)
         text = font.render("Waiting for other player...", 1, (255,0,0), True)
-        win.blit(text, (width/2 - text.get_width()/2, height/2 - text.get_height()/2))
+        window.blit(text, (width/2 - text.get_width()/2,  height/2 - text.get_height()/2))
     else:
         font = pygame.font.SysFont("comicsans", 60)
         text = font.render("Your Move", 1, (0,255,255))
         win.blit(text, (80, 200))
 
         text = font.render("Opponent", 1, (0,255,255))
-        win.blit(text, (380, 200))
+        win.blit(text, (520, 200))
 
         move1 = game.get_player_move(0)
         move2 = game.get_player_move(1)
@@ -80,10 +81,10 @@ def redraw_Window(win, game, player):
         # Render moves. My player always on the left; Opponent on the right
         if player == 1:
             win.blit(text2, (100, 350))
-            win.blit(text1, (400, 350))
+            win.blit(text1, (540, 350))
         else:
             win.blit(text1, (100, 350))
-            win.blit(text2, (400, 350))
+            win.blit(text2, (540, 350))
 
         for btn in btns:
             btn.draw(win)
@@ -91,7 +92,7 @@ def redraw_Window(win, game, player):
     pygame.display.update()
 
 
-btns = [Button("Rock", 50, 500, (0,0,0)), Button("Scissor", 250, 500, (255,0,0)), Button("Paper", 450, 500, (0,255,0))]
+btns = [Button("Rock", 180, 500, (0,0,0)), Button("Scissor", 380, 500, (255,0,0)), Button("Paper", 580, 500, (0,255,0))]
 
 def main():
     run = True
@@ -152,4 +153,27 @@ def main():
                                 n.send(btn.text)
 
         redraw_Window(window, game, player)
-main()
+
+
+def menu():
+    run = True
+    clock = pygame.time.Clock()
+
+    while run:
+        clock.tick(60)
+        window.fill((128,128,128))
+        font = pygame.font.SysFont("comicsans", 60)
+        text = font.render("Click to play", 1, (255,0,0))
+        window.blit(text, (width/2 - text.get_width()/2,  height/2 - text.get_height()/2))
+        pygame.display.update()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                run = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                run = False
+    main()
+
+while True:
+    menu()
