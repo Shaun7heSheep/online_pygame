@@ -20,7 +20,7 @@ connected = set() # store clients' addresses
 games = {} # key: gameId / value: game obj
 idCount = 0
 
-def threaded_client(conn, p, gID):
+def threaded_client(conn, p, gameId):
     global idCount
 
     conn.send(str.encode(str(p)))
